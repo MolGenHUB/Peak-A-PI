@@ -43,15 +43,15 @@ shinyUI(fluidPage(
       tabsetPanel(
         tabPanel(
           "About", 
-          includeMarkdown("docs/README.md")
+          includeMarkdown("docs/About.md")
         ),
         
         tabPanel(
-          title = "Result", 
+          title = "Report", 
           wellPanel(
             helpText("It may takes several minutes to get the coverage infomation."),
 #             helpText("Currently the following parameters are used!"),
-            downloadButton("dl", "Download")
+            downloadButton("report", "Download Report")
           ),
           dataTableOutput("bed")
         ),

@@ -5,7 +5,7 @@ shinyServer(function(input, output) {
   
   output$uibam <- renderUI({
     filenames <- list.files(path = "dat", pattern = ".bam$")
-    selectInput(inputId = "bam", label = "Choose Dataset", filenames)
+    selectInput(inputId = "bam", label = "Choose A Dataset", filenames)
   })
   
   sbf <- reactive({
@@ -16,7 +16,7 @@ shinyServer(function(input, output) {
     if (is.null(input$bam)) 
       return(NULL)
     seqnames <- getSeqnamesBam(sbf())
-    selectInput(inputId = "chr", label = "Choose Chromosome", seqnames)
+    selectInput(inputId = "chr", label = "Choose A Chromosome", seqnames)
   })
   
   cvg <- reactive({
@@ -25,14 +25,14 @@ shinyServer(function(input, output) {
   })
   
   gr <- reactive({
-    gr <- peakapi(dat = cvg(), chr = input$chr, bg = input$bg, min.se = input$se, 
+    gr <- getPeaks(dat = cvg(), chr = input$chr, bg = input$bg, min.se = input$se, 
                      min.ft = input$ft, Edges = input$end)
     ### Add codes to remove duplicate records based on sequences.
     names(gr) <- paste("FC", 1:length(gr), sep = "")
     gr
   })
   
-  bedtable <- reactive({
+  table <- reactive({
     gr <- gr()
     table <- data.frame(chr = input$chr, start = start(gr), end = end(gr), name = names(gr), 
                         score = "*", strand = strand(gr))
@@ -40,13 +40,13 @@ shinyServer(function(input, output) {
   })
   
   output$bed <- renderDataTable({
-    bedtable()
+    table()
   })
   
-  output$dl <- downloadHandler(filename = function() {
+  output$report <- downloadHandler(filename = function() {
     paste(format(Sys.time(), "%Y%m%d%I%M"), "bed", sep = ".")
   }, content = function(file) {
     # Howto add parameters as comments in the header of generated file?
-    write.table(bedtable(), file, sep = "\t", quote = F, row.names = F, col.names = F)
+    write.table(table(), file, sep = "\t", quote = F, row.names = F, col.names = F)
   })
 })

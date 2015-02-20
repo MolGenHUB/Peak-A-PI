@@ -110,7 +110,7 @@ flattopRatio <- function(idx, cvg, right = TRUE) {
   return(ratio)
 }
 
-endsMatch <- function(lm, dat, right = TRUE) {
+matchEnds <- function(lm, dat, right = TRUE) {
   if (right) {
     ## if (x + 49 > chrlen) mate.win <- sapply(lm, function(x) (x + 14):chrlen) else
     mate.win <- sapply(lm, function(x) (x + 14):(x + 49))
@@ -126,7 +126,7 @@ endsMatch <- function(lm, dat, right = TRUE) {
   return(mate)
 }
 
-peakapi <- function(dat, chr, w = 15, bg = 20, min.se = 0.5, min.ft = 0.8, Edges = NULL) {
+getPeaks <- function(dat, chr, w = 15, bg = 20, min.se = 0.5, min.ft = 0.8, Edges = NULL) {
   cvg.p5 <- dat[["pos"]]$cvg.p5
   cvg.p3 <- dat[["pos"]]$cvg.p3
   cvg.n5 <- dat[["neg"]]$cvg.n5
@@ -155,10 +155,10 @@ peakapi <- function(dat, chr, w = 15, bg = 20, min.se = 0.5, min.ft = 0.8, Edges
   n5 <- lm.n5[which(ft.n5 >= min.ft)]
   n3 <- lm.n3[which(ft.n3 >= min.ft)]
   
-  p5m <- endsMatch(p5, cvg.p3, right = TRUE)
-  p3m <- endsMatch(p3, cvg.p5, right = FALSE)
-  n5m <- endsMatch(n5, cvg.n3, right = FALSE)
-  n3m <- endsMatch(n3, cvg.n5, right = TRUE)
+  p5m <- matchEnds(p5, cvg.p3, right = TRUE)
+  p3m <- matchEnds(p3, cvg.p5, right = FALSE)
+  n5m <- matchEnds(n5, cvg.n3, right = FALSE)
+  n3m <- matchEnds(n3, cvg.n5, right = TRUE)
   
   gr.p5 <- GRanges(seqnames = chr, IRanges(start = p5, end = p5m), strand = "+")
   gr.p3 <- GRanges(seqnames = chr, IRanges(start = p3m, end = p3), strand = "+")
